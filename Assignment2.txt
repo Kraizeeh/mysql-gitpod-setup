@@ -1,0 +1,303 @@
+Create DATABASE omss;
+USE omss;
+
+CREATE TABLE content_distributor
+(
+distributor_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+distributor_name VARCHAR(50) NOT NULL UNIQUE
+);
+INSERT INTO content_distributor (distributor_id, distributor_name) VALUES (101,'Netflix');
+INSERT INTO content_distributor (distributor_name) VALUES ('Hulu');
+INSERT INTO content_distributor (distributor_name) VALUES ('HBO Max');
+INSERT INTO content_distributor (distributor_name) VALUES ('Disney Plus');
+INSERT INTO content_distributor (distributor_name) VALUES ('Crunchyroll');
+SELECT * FROM content_distributor;
+
+CREATE TABLE country
+(
+country_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+country_name VARCHAR(50) NOT NULL UNIQUE,
+currency VARCHAR(30) NOT NULL
+);
+INSERT INTO country (country_id, country_name, currency) VALUES (201, 'United States of America', 'US Dollar');
+INSERT INTO country (country_name, currency) VALUES ('Japan', 'Japanese Yen');
+INSERT INTO country (country_name, currency) VALUES ('Philippines', 'Philippine Peso');
+INSERT INTO country (country_name, currency) VALUES ('Canada', 'Canadian Dollar');
+INSERT INTO country (country_name, currency) VALUES ('South Korea', 'Korean Won');
+SELECT * FROM country;
+
+CREATE TABLE contacts
+(
+mobile_number VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+fk_distributor_id INT NOT NULL,
+fk_country_id INT NOT NULL,
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50) NOT NULL,
+position VARCHAR(50) NOT NULL,
+department VARCHAR(50) NOT NULL,
+contact_email VARCHAR(50) NOT NULL UNIQUE,
+contact_city VARCHAR(85) NOT NULL,
+mobile_number1 VARCHAR(20),
+mobile_number2 VARCHAR(20),
+mobile_number3 VARCHAR(20),
+FOREIGN KEY (fk_distributor_id)
+    REFERENCES content_distributor(distributor_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_country_id)
+    REFERENCES country(country_id)
+    ON DELETE CASCADE
+);
+INSERT INTO contacts (mobile_number, fk_distributor_id, fk_country_id, first_name, last_name, position, department, contact_email, contact_city) VALUES (8102051993, 105, 202, 'Chrizzadel', 'Ozawa', 'Accountant', 'Finance', 'chrizz@crunchyroll.jp', 'Tokyo');
+INSERT INTO contacts (mobile_number, fk_distributor_id, fk_country_id, first_name, last_name, position, department, contact_email, contact_city) VALUES (1825091797, 101, 204, 'Tom', 'Literato', 'Translator', 'Language', 'charlestom@netflix.ca', 'Calgary');
+INSERT INTO contacts (mobile_number, fk_distributor_id, fk_country_id, first_name, last_name, position, department, contact_email, contact_city) VALUES (8291205998, 104, 205, 'Mich', 'Sakuma', 'Manager', 'Supply Chain', 'mich@disneyplus.kr', 'Seoul');
+SELECT * FROM contacts;
+
+CREATE TABLE distributor_country
+(
+distributor_country_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_distributor_id INT NOT NULL,
+fk_country_id INT NOT NULL,
+FOREIGN KEY (fk_distributor_id)
+    REFERENCES content_distributor(distributor_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_country_id)
+    REFERENCES country(country_id)
+    ON DELETE CASCADE
+);
+INSERT INTO distributor_country (distributor_country_id, fk_distributor_id, fk_country_id) VALUES (301, 105, 202);
+INSERT INTO distributor_country (fk_distributor_id, fk_country_id) VALUES (101, 204);
+INSERT INTO distributor_country (fk_distributor_id, fk_country_id) VALUES (104, 205);
+SELECT * FROM distributor_country;
+
+CREATE TABLE plan
+(
+plan_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+plan_name VARCHAR(50) NOT NULL UNIQUE,
+tier VARCHAR(10) NOT NULL
+);
+INSERT INTO plan (plan_id, plan_name, tier) VALUES (401, 'Basic', 'Free');
+INSERT INTO plan (plan_name, tier) VALUES ('Premium', 'Mid');
+INSERT INTO plan (plan_name, tier) VALUES ('Diamond', 'No Limit');
+SELECT * FROM plan;
+
+CREATE TABLE distributor_plan
+(
+distributor_plan_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_distributor_id INT NOT NULL,
+fk_plan_id INT NOT NULL,
+FOREIGN KEY (fk_distributor_id)
+    REFERENCES content_distributor(distributor_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_plan_id)
+    REFERENCES plan(plan_id)
+    ON DELETE CASCADE
+);
+INSERT INTO distributor_plan (distributor_plan_id, fk_distributor_id, fk_plan_id) VALUES (501, 104 ,403);
+INSERT INTO distributor_plan (fk_distributor_id, fk_plan_id) VALUES (105, 401);
+INSERT INTO distributor_plan (fk_distributor_id, fk_plan_id) VALUES (101, 402);
+INSERT INTO distributor_plan (fk_distributor_id, fk_plan_id) VALUES (102, 401);
+SELECT * FROM distributor_plan;
+
+CREATE TABLE digital_content
+(
+content_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(250) NOT NULL,
+content_type VARCHAR(50) NOT NULL,
+genre VARCHAR(50) NOT NULL,
+content_description TEXT,
+age_rating VARCHAR(10) NOT NULL,
+date_last_viewed DATE
+);
+INSERT INTO digital_content (content_id, title, content_type, genre, content_description, age_rating) VALUES (601, 'BTS On Stage in Los Angeles', 'Movie', 'Concert', 'Purple colors the city of Los Angeles, as BTS brings their “Permission to Dance” concert to SoFi Stadium for the first time in two years.', 'GP');
+INSERT INTO digital_content (title, content_type, genre, content_description, age_rating) VALUES ('Demon Slayer', 'TV Series', 'Anime', 'After a demon attack leaves his family slain and his sister cursed, Tanjiro embarks upon a perilous journey to find a cure and avenge those he has lost.', 'R13');
+INSERT INTO digital_content (title, content_type, genre, content_description, age_rating) VALUES ('Star Wars: The Last Jedi', 'Movie', 'Blockbuster', 'The peaceful and solitary existence of Luke Skywalker gets upended when he encounters Rey, a young woman who shows strong signs of the Force.', 'PG13');
+SELECT * FROM digital_content;
+
+CREATE TABLE actor_list
+(
+actor_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50)
+);
+INSERT INTO actor_list (actor_id, first_name, last_name) VALUES (701, 'Taehyung', 'Kim');
+INSERT INTO actor_list (first_name, last_name) VALUES ('Adam', 'Driver');
+INSERT INTO actor_list (first_name, last_name) VALUES ('Daisy', 'Ridley');
+INSERT INTO actor_list (first_name, last_name) VALUES ('Jimin', 'Park');
+INSERT INTO actor_list (first_name, last_name) VALUES ('Akari', 'Kito');
+SELECT * FROM actor_list;
+
+CREATE TABLE actor_content
+(
+actor_content_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_actor_id INT NOT NULL,
+fk_content_id INT NOT NULL,
+FOREIGN KEY (fk_actor_id)
+    REFERENCES actor_list(actor_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_content_id)
+    REFERENCES digital_content(content_id)
+    ON DELETE CASCADE
+);
+INSERT INTO actor_content (actor_content_id, fk_actor_id, fk_content_id) VALUES (801, 701, 601);
+INSERT INTO actor_content (fk_actor_id, fk_content_id) VALUES (702, 603);
+INSERT INTO actor_content (fk_actor_id, fk_content_id) VALUES (703, 603);
+INSERT INTO actor_content (fk_actor_id, fk_content_id) VALUES (704, 601);
+INSERT INTO actor_content (fk_actor_id, fk_content_id) VALUES (705, 602);
+SELECT * FROM actor_content;
+
+CREATE TABLE distributor_content
+(
+distributor_content_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_distributor_id INT NOT NULL,
+fk_content_id INT NOT NULL,
+fk_plan_id INT NOT NULL,
+available BOOL NOT NULL,
+date_made_available DATE,
+cost_per_view FLOAT,
+advertising_enabled BOOL NOT NULL,
+FOREIGN KEY (fk_distributor_id)
+    REFERENCES content_distributor(distributor_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_content_id)
+    REFERENCES digital_content(content_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_plan_id)
+    REFERENCES plan(plan_id)
+    ON DELETE CASCADE
+);
+INSERT INTO distributor_content (distributor_content_id, fk_distributor_id, fk_content_id, fk_plan_id, available, date_made_available, advertising_enabled) VALUES (901, 104, 601, 403, 1, '2022-06-13', 0);
+INSERT INTO distributor_content (fk_distributor_id, fk_content_id, fk_plan_id, available, date_made_available, advertising_enabled) VALUES (101, 603, 402, 1, '2017-12-15', 0);
+INSERT INTO distributor_content (fk_distributor_id, fk_content_id, fk_plan_id, available, date_made_available, advertising_enabled) VALUES (105, 602, 401, 1, '2019-04-06', 1);
+SELECT * FROM distributor_content;
+
+CREATE TABLE customer
+(
+customer_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_distributor_plan_id INT NOT NULL,
+fk_country_id INT NOT NULL,
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50) NOT NULL,
+login_email VARCHAR(50) NOT NULL UNIQUE,
+password VARCHAR(50) NOT NULL,
+email1 VARCHAR(50),
+email2 VARCHAR(50),
+email3 VARCHAR(50),
+email4 VARCHAR(50),
+birth_date DATE NOT NULL,
+FOREIGN KEY (fk_distributor_plan_id)
+    REFERENCES distributor_plan(distributor_plan_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_country_id)
+    REFERENCES country(country_id)
+    ON DELETE CASCADE
+);
+INSERT INTO customer (customer_id, fk_distributor_plan_id, fk_country_id, first_name, last_name, login_email, password, birth_date) VALUES (1001, 501, 204, 'Kraizeeh', 'Gomeceria', 'kraizeeh@gmail.com', 'p@ssw0rd', '1992-05-02');
+INSERT INTO customer (fk_distributor_plan_id, fk_country_id, first_name, last_name, login_email, password, birth_date) VALUES (502, 204, 'Charles', 'Tomkins', 'tomkins@gmail.com', 'pa$sw0rd', '1996-07-19');
+INSERT INTO customer (fk_distributor_plan_id, fk_country_id, first_name, last_name, login_email, password, birth_date) VALUES (503, 203, 'Adrian', 'Gomeceria', 'adrian@gmail.com', 'pas$w0rd', '1997-05-12');
+SELECT * FROM customer;
+
+CREATE TABLE payment_type
+(
+payment_type_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+payment_type VARCHAR(20) NOT NULL UNIQUE
+);
+INSERT INTO payment_type (payment_type_id, payment_type) VALUES (1101, 'Credit');
+INSERT INTO payment_type (payment_type) VALUES ('Debit');
+INSERT INTO payment_type (payment_type) VALUES ('PayPal');
+SELECT * FROM payment_type;
+
+CREATE TABLE customer_payment
+(
+customer_payment_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_customer_id INT NOT NULL,
+fk_payment_type_id INT NOT NULL,
+account_name VARCHAR(100),
+account_number INT,
+bank_name VARCHAR(50),
+card_expiration CHAR(5),
+last_transaction_date DATE,
+months_paid INT,
+FOREIGN KEY (fk_customer_id)
+    REFERENCES customer(customer_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_payment_type_id)
+    REFERENCES payment_type(payment_type_id)
+    ON DELETE CASCADE
+);
+INSERT INTO customer_payment (customer_payment_id, fk_customer_id, fk_payment_type_id, account_name, account_number, bank_name, card_expiration, last_transaction_date, months_paid) VALUES (1201, 1001, 1101, 'Kraizeeh', 1234567, 'Scotiabank', '10/24', '2022-06-13', 12);
+INSERT INTO customer_payment (fk_customer_id, fk_payment_type_id, account_name, account_number, bank_name, card_expiration, last_transaction_date, months_paid) VALUES (1002, 1102, 'Tomkins', 7654321, 'CIBC', '10/23', '2022-10-08', 3);
+INSERT INTO customer_payment (fk_customer_id, fk_payment_type_id, account_name, last_transaction_date, months_paid) VALUES (1003, 1103, 'Adyong', '2022-09-01', 4);
+SELECT * FROM customer_payment;
+
+CREATE TABLE content_view
+(
+content_view_id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
+fk_content_id INT NOT NULL,
+fk_customer_id INT NOT NULL,
+watch_start_time DATETIME,
+watch_end_time DATETIME,
+rented BOOL,
+paid_to_watch FLOAT,
+percent_watched FLOAT,
+customer_rating INT,
+FOREIGN KEY (fk_content_id)
+    REFERENCES digital_content(content_id)
+    ON DELETE CASCADE,
+FOREIGN KEY (fk_customer_id)
+    REFERENCES customer(customer_id)
+    ON DELETE CASCADE
+);
+INSERT INTO content_view (content_view_id, fk_content_id, fk_customer_id, watch_start_time, watch_end_time, rented, percent_watched, customer_rating) VALUES (1301, 601, 1001, '2022-06-13 19:00:00', '2022-06-13 21:10:00', 0, 100.00, 5);
+INSERT INTO content_view (fk_content_id, fk_customer_id, watch_start_time, watch_end_time, rented, percent_watched, customer_rating) VALUES (602, 1002, '2022-10-08 08:30:00', '2022-10-08 15:00:00', 0, 20.00, 4);
+INSERT INTO content_view (fk_content_id, fk_customer_id, watch_start_time, watch_end_time, rented, percent_watched, customer_rating) VALUES (603, 1003, '2022-09-30 21:00:00', '2022-09-30 23:32:00', 0, 100.00, 5);
+SELECT * FROM content_view;
+
+-- 1. List all blockbuster movies
+SELECT title from digital_content WHERE genre = 'Blockbuster';
+
+-- 2. Know the number of movies available at the no limit tier
+SELECT COUNT(distributor_content_id)
+FROM distributor_content
+JOIN plan
+ON plan.plan_id = distributor_content.fk_plan_id
+WHERE tier = 'No Limit';
+
+-- 3. Change tier from free to mid-level
+UPDATE distributor_plan
+SET fk_plan_id = 402
+WHERE distributor_plan_id = 502;
+
+-- 4. Create a new account at the free tier level
+INSERT INTO customer (fk_distributor_plan_id, fk_country_id, first_name, last_name, login_email, password, birth_date) VALUES (504, 203, 'Pearl', 'Santiago', 'pearl@gmail.com', 'p&ssw0rd', '2000-04-11');
+
+-- 5. Add additional email to account
+UPDATE customer
+SET email1 = 'tomkins@outlook.com'
+WHERE customer_id = 1002;
+
+-- 6. Know all concert movies where at least one customer has given a 5 rating
+SELECT DISTINCT title
+FROM digital_content
+JOIN content_view
+ON digital_content.content_id = content_view.fk_content_id
+WHERE genre = 'Concert' AND customer_rating = 5;
+
+-- 7. Change all content from Netflix as unavailable
+UPDATE distributor_content
+SET available = 0
+WHERE fk_distributor_id = 101;
+
+-- 8. Delete a customer on a mid-tier plan whose subscription is paid for 4 months
+DELETE customer FROM customer
+JOIN distributor_plan
+ON distributor_plan.distributor_plan_id = customer.fk_distributor_plan_id
+JOIN customer_payment
+ON customer_payment.fk_customer_id = customer.customer_id
+WHERE fk_plan_id = 402 AND months_paid = 4;
+
+-- 9. Find the average star rating for all TV-series
+SELECT AVG(customer_rating)
+FROM content_view
+JOIN digital_content
+ON digital_content.content_id = content_view.fk_content_id
+WHERE content_type = 'TV Series';
